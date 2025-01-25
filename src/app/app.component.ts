@@ -2,27 +2,33 @@ import { Component } from '@angular/core';
 import { SummaryService } from './services/summary.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, MatIconModule],
   template: ` <div
     class="dm-sans-font flex min-h-screen flex-col items-center justify-center bg-black p-6"
   >
-    <h1 class="mb-10 text-center text-6xl font-light text-white">SpeedWatch</h1>
+    <h1 class="mb-4 text-center text-6xl font-light text-white">SpeedWatch</h1>
+    <span class="p-4 text-zinc-400"
+      >Summarise Youtube videos to text with a click of a button</span
+    >
     <div class="w-full max-w-2xl justify-center">
       <div class="mb-6 flex">
         <input
           [(ngModel)]="videoUrl"
           placeholder="Enter YouTube Video URL"
-          class="flex-grow rounded-l-2xl border border-white px-4 py-2 text-white focus:border-sky-500 focus:outline focus:outline-sky-500"
+          class="flex-grow rounded-2xl border border-white px-4 py-2 text-white focus:border-sky-500 focus:outline focus:outline-sky-500"
         />
         <button
           (click)="fetchSummary()"
-          class="rounded-r-2xl border border-white bg-white px-6 py-2 text-black hover:opacity-80"
+          class="ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-white hover:opacity-80"
         >
-          Generate Summary
+          <mat-icon class="transition duration-300 hover:rotate-90"
+            >chevron_right</mat-icon
+          >
         </button>
       </div>
       <div *ngIf="isLoading" class="flex items-center justify-center">
