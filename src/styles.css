@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+.dm-sans-font {
+  font-family: "DM Sans", serif;
+  font-optical-sizing: auto;
+}

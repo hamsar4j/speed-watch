@@ -1,3 +1,4 @@
 # use quotes to enclose below package
 fastapi[standard]
 youtube-transcript-api
+openai
