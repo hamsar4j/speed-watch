@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [FormsModule, CommonModule, MatIconModule],
   template: ` <div
-    class="dm-sans-font flex min-h-screen flex-col items-center justify-center bg-black p-6"
+    class="dm-sans-font flex min-h-screen flex-col items-center justify-center bg-black bg-[url(/red_distortion_3.jpg)] p-6"
   >
     <h1 class="mb-4 text-center text-6xl font-light text-white">SpeedWatch</h1>
     <span class="p-4 text-zinc-400"

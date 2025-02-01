@@ -4,6 +4,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
 import re
+import os
 
 
 app = FastAPI()
@@ -21,9 +22,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# client = OpenAI(
+#     base_url = 'http://localhost:11434/v1',
+#     api_key='ollama', # required, but unused
+# )
+
 client = OpenAI(
-    base_url = 'http://localhost:11434/v1',
-    api_key='ollama', # required, but unused
+    base_url = 'https://api.groq.com/openai/v1',
+    api_key=os.getenv("GROQ_API_KEY"), 
 )
 
 class VideoUrl(BaseModel):
@@ -50,7 +56,7 @@ def extract_video_id(url: str):
 
 def summarize(text: str):
     response = client.chat.completions.create(
-        model="llama3.2:latest",
+        model="gemma2-9b-it",
         messages=[
             {"role": "system", "content": "Provide a concise summary of the following text. Focus on the key points and main ideas. Return ONLY the summary."},
             {"role": "user", "content": text},
