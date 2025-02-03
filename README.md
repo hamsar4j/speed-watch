@@ -4,6 +4,8 @@ SpeedWatch is a productivity tool that quickly summarizes YouTube videos using L
 
 ![](https://github.com/hamsar4j/speed-watch/blob/main/public/ss_main.png)
 
+![](https://github.com/hamsar4j/speed-watch/blob/main/public/ss_summary.png)
+
 ![](https://github.com/hamsar4j/speed-watch/blob/main/public/ss_load.png)
 
-![](https://github.com/hamsar4j/speed-watch/blob/main/public/ss_summary.png)
+![](https://github.com/hamsar4j/speed-watch/blob/main/public/ss_search.png)
