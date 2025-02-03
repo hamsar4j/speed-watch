@@ -6,12 +6,15 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class SummaryService {
-  private apiUrl = 'http://0.0.0.0:8000/get_summary';
+  private apiUrl = 'http://localhost:8000'; // Update with your backend URL
 
   constructor(private http: HttpClient) {}
 
   getSummary(videoUrl: string): Observable<any> {
-    const body = { url: videoUrl };
-    return this.http.post<any>(this.apiUrl, body);
+    return this.http.post(`${this.apiUrl}/get_summary`, { url: videoUrl });
+  }
+
+  chat(chatRequest: { user_input: string; video_id: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/chat`, chatRequest);
   }
 }

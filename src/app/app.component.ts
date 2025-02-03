@@ -48,6 +48,29 @@ import { MatIconModule } from '@angular/material/icon';
         <h2 class="mb-4 text-2xl font-semibold text-gray-700">Summary</h2>
         <p class="leading-relaxed text-gray-600">{{ summary }}</p>
       </div>
+      <div *ngIf="summary" class="mt-6">
+        <h2 class="mb-4 text-2xl font-semibold text-gray-700">Chat</h2>
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
+          <div *ngFor="let message of chatMessages" class="mb-4">
+            <div class="text-gray-700">
+              {{ message.role }}: {{ message.content }}
+            </div>
+          </div>
+          <input
+            [(ngModel)]="chatInput"
+            placeholder="Ask a question about the video"
+            class="flex-grow rounded-2xl border border-black px-4 py-2 text-black focus:border-sky-500 focus:outline focus:outline-sky-500"
+          />
+          <button
+            (click)="sendChatMessage()"
+            class="ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-white hover:opacity-80"
+          >
+            <mat-icon class="transition duration-300 hover:rotate-90"
+              >chevron_right</mat-icon
+            >
+          </button>
+        </div>
+      </div>
     </div>
   </div>`,
 })
@@ -58,6 +81,8 @@ export class AppComponent {
   isLoading: boolean = false;
   isError: boolean = false;
   errorMsg: string = `Please check that your URL is in the correct format`;
+  chatInput: string = '';
+  chatMessages: { role: string; content: string }[] = [];
 
   constructor(private summaryService: SummaryService) {}
 
@@ -80,5 +105,31 @@ export class AppComponent {
         },
       });
     }
+  }
+
+  sendChatMessage() {
+    if (this.chatInput && this.videoUrl) {
+      const video_id = this.extractVideoId(this.videoUrl);
+      this.chatMessages.push({ role: 'user', content: this.chatInput });
+      this.summaryService
+        .chat({ user_input: this.chatInput, video_id: video_id })
+        .subscribe({
+          next: (data) => {
+            this.chatMessages.push({
+              role: 'assistant',
+              content: data.response,
+            });
+            this.chatInput = '';
+          },
+          error: (err) => {
+            console.error('Error: ', err);
+          },
+        });
+    }
+  }
+
+  extractVideoId(url: string): string {
+    const match = url.match(/v=([^&]+)/);
+    return match ? match[1] : '';
   }
 }

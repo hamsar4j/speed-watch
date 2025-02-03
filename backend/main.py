@@ -1,11 +1,8 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from youtube_transcript_api import YouTubeTranscriptApi
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from openai import OpenAI
-import re
-import os
-
+from api.summary import router as summary_router
+from api.chat import router as chat_router
+from database.db import init_db
 
 app = FastAPI()
 
@@ -22,44 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# client = OpenAI(
-#     base_url = 'http://localhost:11434/v1',
-#     api_key='ollama', # required, but unused
-# )
+init_db()
 
-client = OpenAI(
-    base_url = 'https://api.groq.com/openai/v1',
-    api_key=os.getenv("GROQ_API_KEY"), 
-)
-
-class VideoUrl(BaseModel):
-    url: str
-
-@app.post("/get_summary")
-async def get_summary(request: VideoUrl):
-    try:
-        video_id = extract_video_id(request.url)
-        transcript = YouTubeTranscriptApi.get_transcript(video_id)
-
-        text = " ".join([item['text'] for item in transcript])
-        summary = summarize(text)
-        return {"summary": summary}
-
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-def extract_video_id(url: str):
-    match = re.search(r'v=([^&]+)', url)
-    if not match:
-        raise ValueError("Invalid YouTube URL")
-    return match.group(1)
-
-def summarize(text: str):
-    response = client.chat.completions.create(
-        model="gemma2-9b-it",
-        messages=[
-            {"role": "system", "content": "Provide a concise summary of the following text. Focus on the key points and main ideas. Return ONLY the summary."},
-            {"role": "user", "content": text},
-        ]
-    )
-    return response.choices[0].message.content
+app.include_router(summary_router)
+app.include_router(chat_router)
