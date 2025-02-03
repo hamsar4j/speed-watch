@@ -67,7 +67,7 @@ import { MatIconModule } from '@angular/material/icon';
             />
             <button
               (click)="sendChatMessage()"
-              class="hover:opacity-80% ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-black text-white"
+              class="hover:opacity-80 ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-black text-white"
             >
               <mat-icon class="hover:animate-wiggle">chevron_right </mat-icon>
             </button>

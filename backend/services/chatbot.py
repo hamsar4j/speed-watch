@@ -7,7 +7,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from utils import State
 
 # init chatbot
-llm = ChatGroq(model="llama3-8b-8192")
+llm = ChatGroq(model="llama-3.1-8b-instant")
 
 # search tool
 wrapper = DuckDuckGoSearchAPIWrapper(max_results=5)
