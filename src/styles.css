@@ -4,3 +4,49 @@
   font-family: "DM Sans", serif;
   font-optical-sizing: auto;
 }
+
+.message-bubble {
+  max-width: 70%;
+  padding: 10px 15px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.user-message {
+  background-color: #000000;
+  color: white;
+  margin-left: auto;
+  border-bottom-right-radius: 5px;
+}
+
+.assistant-message {
+  background-color: #e2e8f0;
+  color: black;
+  margin-right: auto;
+  border-bottom-left-radius: 5px;
+}
+
+.message-content {
+  word-wrap: break-word;
+}
+
+.message-timestamp {
+  text-align: right;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+@theme {
+  --animate-wiggle: wiggle 1s;
+
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(4px);
+    }
+  }
+}

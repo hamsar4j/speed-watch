@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from models.models import ChatRequest
 from services.chatbot import stream_graph_updates
 from database.db import get_db_connection
+from utils import extract_video_id
 
 router = APIRouter()
 
@@ -10,8 +11,9 @@ async def chat(request: ChatRequest):
     """Retrieves video summary and answers user questions using LangChain chatbot."""
     try:
         # retrieve summary from database
+        video_id = extract_video_id(request.video_url)
         conn, c = get_db_connection()
-        c.execute("SELECT summary FROM summaries WHERE video_id = ?", (request.video_id,))
+        c.execute("SELECT summary FROM summaries WHERE video_id = ?", (video_id,))
         result = c.fetchone()
         conn.close()
 

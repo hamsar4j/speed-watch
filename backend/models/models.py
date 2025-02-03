@@ -5,4 +5,4 @@ class VideoUrl(BaseModel):
 
 class ChatRequest(BaseModel):
     user_input: str
-    video_id: str
+    video_url: str

@@ -26,9 +26,7 @@ import { MatIconModule } from '@angular/material/icon';
           (click)="fetchSummary()"
           class="ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-white hover:opacity-80"
         >
-          <mat-icon class="transition duration-300 hover:rotate-90"
-            >chevron_right</mat-icon
-          >
+          <mat-icon class="hover:animate-wiggle">chevron_right</mat-icon>
         </button>
       </div>
       <div *ngIf="isLoading" class="flex items-center justify-center">
@@ -41,34 +39,39 @@ import { MatIconModule } from '@angular/material/icon';
           {{ errorMsg }}
         </div>
       </div>
-      <div
-        *ngIf="summary"
-        class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md"
-      >
-        <h2 class="mb-4 text-2xl font-semibold text-gray-700">Summary</h2>
-        <p class="leading-relaxed text-gray-600">{{ summary }}</p>
-      </div>
-      <div *ngIf="summary" class="mt-6">
-        <h2 class="mb-4 text-2xl font-semibold text-gray-700">Chat</h2>
+      <div *ngIf="chatMessages.length > 0" class="mt-6">
         <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
-          <div *ngFor="let message of chatMessages" class="mb-4">
-            <div class="text-gray-700">
-              {{ message.role }}: {{ message.content }}
+          <div class="chat-messages mb-4 max-h-96 overflow-y-auto">
+            <div *ngFor="let message of chatMessages" class="mb-4">
+              <div
+                [ngClass]="{
+                  'user-message': message.role === 'user',
+                  'assistant-message': message.role === 'assistant',
+                }"
+                class="message-bubble"
+              >
+                <div class="message-content">
+                  {{ message.content }}
+                </div>
+                <div class="message-timestamp mt-1 text-xs text-gray-500">
+                  {{ message.timestamp }}
+                </div>
+              </div>
             </div>
           </div>
-          <input
-            [(ngModel)]="chatInput"
-            placeholder="Ask a question about the video"
-            class="flex-grow rounded-2xl border border-black px-4 py-2 text-black focus:border-sky-500 focus:outline focus:outline-sky-500"
-          />
-          <button
-            (click)="sendChatMessage()"
-            class="ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-white hover:opacity-80"
-          >
-            <mat-icon class="transition duration-300 hover:rotate-90"
-              >chevron_right</mat-icon
+          <div class="flex">
+            <input
+              [(ngModel)]="chatInput"
+              placeholder="Ask a question about the video"
+              class="flex-grow rounded-2xl border border-gray-300 px-4 py-2 text-black focus:border-sky-500 focus:ring-2 focus:ring-sky-500 focus:outline-none"
+            />
+            <button
+              (click)="sendChatMessage()"
+              class="hover:opacity-80% ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-black text-white"
             >
-          </button>
+              <mat-icon class="hover:animate-wiggle">chevron_right </mat-icon>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -82,7 +85,7 @@ export class AppComponent {
   isError: boolean = false;
   errorMsg: string = `Please check that your URL is in the correct format`;
   chatInput: string = '';
-  chatMessages: { role: string; content: string }[] = [];
+  chatMessages: { role: string; content: string; timestamp: string }[] = [];
 
   constructor(private summaryService: SummaryService) {}
 
@@ -90,6 +93,7 @@ export class AppComponent {
     this.isLoading = false;
     this.isError = false;
     this.summary = '';
+    this.chatMessages = []; // clear previous chat messages
 
     if (this.videoUrl) {
       this.isLoading = true;
@@ -97,6 +101,13 @@ export class AppComponent {
         next: (data) => {
           this.summary = data.summary;
           this.isLoading = false;
+
+          // add the summary as the first message from the bot
+          this.chatMessages.push({
+            role: 'assistant',
+            content: `Here's the summary of the video:\n\n${this.summary}`,
+            timestamp: this.getCurrentTimestamp(),
+          });
         },
         error: (err) => {
           console.error('Error: ', err);
@@ -109,15 +120,20 @@ export class AppComponent {
 
   sendChatMessage() {
     if (this.chatInput && this.videoUrl) {
-      const video_id = this.extractVideoId(this.videoUrl);
-      this.chatMessages.push({ role: 'user', content: this.chatInput });
+      const video_url = this.videoUrl;
+      this.chatMessages.push({
+        role: 'user',
+        content: this.chatInput,
+        timestamp: this.getCurrentTimestamp(),
+      });
       this.summaryService
-        .chat({ user_input: this.chatInput, video_id: video_id })
+        .chat({ user_input: this.chatInput, video_url: video_url })
         .subscribe({
           next: (data) => {
             this.chatMessages.push({
               role: 'assistant',
               content: data.response,
+              timestamp: this.getCurrentTimestamp(),
             });
             this.chatInput = '';
           },
@@ -128,8 +144,7 @@ export class AppComponent {
     }
   }
 
-  extractVideoId(url: string): string {
-    const match = url.match(/v=([^&]+)/);
-    return match ? match[1] : '';
+  getCurrentTimestamp(): string {
+    return new Date().toLocaleTimeString();
   }
 }
