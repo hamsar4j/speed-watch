@@ -5,9 +5,10 @@ from langchain_community.tools import DuckDuckGoSearchResults
 from langchain_community.utilities import DuckDuckGoSearchAPIWrapper
 from langgraph.checkpoint.memory import MemorySaver
 from utils import State
+import os
 
 # init chatbot
-llm = ChatGroq(model="llama-3.1-8b-instant")
+llm = ChatGroq(model="deepseek-r1-distill-llama-70b", api_key=os.getenv("GROQ_API_KEY"))
 
 # search tool
 wrapper = DuckDuckGoSearchAPIWrapper(max_results=5)

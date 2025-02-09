@@ -17,8 +17,7 @@ SpeedWatch is a powerful productivity tool designed to help you quickly summariz
 1. Install dependencies
 
 ```console
-yarn install
-cd backend
+yarn
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
